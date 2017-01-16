@@ -1,27 +1,28 @@
-{-# LANGUAGE FlexibleInstances, MultiParamTypeClasses #-}
+{-# LANGUAGE FlexibleInstances     #-}
+{-# LANGUAGE MultiParamTypeClasses #-}
 
 module XMonad.Layout.SingleSpacing (
     spacing
 ) where
 
 
-import Control.Arrow (second)
-import Graphics.X11 (Rectangle(..))
-import XMonad.Layout.LayoutModifier
-import XMonad.Util.XUtils (fi)
+import           Control.Arrow                (second)
 
+import           Graphics.X11                 (Rectangle (..))
 
-spacing :: Int -> l a -> ModifiedLayout SingleSpacing l a
-spacing pixels = ModifiedLayout $ SingleSpacing pixels
+import qualified XMonad.Layout.LayoutModifier as LM
+import           XMonad.Util.XUtils           (fi)
 
 
 newtype SingleSpacing a = SingleSpacing Int deriving (Read, Show)
 
-
-instance LayoutModifier SingleSpacing a where
+instance LM.LayoutModifier SingleSpacing a where
     pureModifier (SingleSpacing pixels) screen _ windows =
         (map (second $ shrink pixels screen) windows, Nothing)
 
+-------------------------------------------------------------------------------
+spacing :: Int -> l a -> LM.ModifiedLayout SingleSpacing l a
+spacing pixels = LM.ModifiedLayout $ SingleSpacing pixels
 
 shrink :: Int -> Rectangle -> Rectangle -> Rectangle
 shrink pixels (Rectangle screenX screenY _ _)
